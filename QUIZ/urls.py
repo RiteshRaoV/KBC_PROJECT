@@ -3,5 +3,6 @@ from . import views
 
 urlpatterns = [
     path('set-preferences/',views.set_preferences,name='set_preferences'),
-    path('start-quiz/',views.set_preferences,name='start_quiz')
+    path('take_quiz/', views.start_quiz, name='take_quiz'),
+    path('submit_quiz/<int:quiz_attempt_id>/', views.submit_quiz, name='submit_quiz'),
 ]

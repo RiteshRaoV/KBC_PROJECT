@@ -23,7 +23,7 @@ class UserResponse(models.Model):
     quiz_attempt = models.ForeignKey(QuizAttempt, on_delete=models.CASCADE)
     question_text = models.CharField(max_length=1000)
     selected_option = models.CharField(max_length=1000)
-    is_correct = models.BooleanField()
+    correct_option = models.CharField(max_length=1000)
 
     def __str__(self):
         return f"Response for {self.quiz_attempt} - {self.question_text}"

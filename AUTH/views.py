@@ -1,4 +1,3 @@
-# accounts/views.py
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model, authenticate, login

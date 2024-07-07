@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Quiz</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Take Quiz</h2>
+    <form method="post" action="{% url 'submit_quiz' quiz_attempt_id %}">
+        {% csrf_token %}
+        {% for question in questions %}
+        <div class="form-group">
+            <label>{{ question.question }}</label>
+            <input type="hidden" name="question_{{ forloop.counter }}" value="{{ question.question }}">
+            <input type="hidden" name="correct_option_question_{{ forloop.counter }}" value="{{ question.correct_answer }}">
+            <div class="form-check">
+                {% for option in question.incorrect_answers %}
+                <input class="form-check-input" type="radio" name="selected_option_question_{{ forloop.counter }}" value="{{ option }}" required>
+                <label class="form-check-label">{{ option }}</label><br>
+                {% endfor %}
+                <input class="form-check-input" type="radio" name="selected_option_question_{{ forloop.counter }}" value="{{ question.correct_answer }}" required>
+                <label class="form-check-label">{{ question.correct_answer }}</label><br>
+            </div>
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Submit Quiz</button>
+    </form>
+</div>
+</body>
+</html>
