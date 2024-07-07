@@ -3,9 +3,11 @@ from .models import UserPreference
 import requests
 from .models import UserPreference, QuizAttempt,UserResponse
 from django.utils import timezone
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from urllib.parse import urlencode
 import time
+import random
 
 
 @login_required
@@ -27,7 +29,6 @@ def set_preferences(request):
     return render(request, 'quizTemplates/preferences.html')
 
 
-import pprint
 # Base API URL
 API_URL = "https://opentdb.com/api.php"
 
@@ -62,7 +63,17 @@ def start_quiz(request):
                 data = response.json()
                 response_code = data.get('response_code')
                 if response_code == 0:
-                    questions.extend(data.get('results', []))
+                    for items in data.get('results'):
+                        question = {
+                                'question': items['question'],
+                                'options': items['incorrect_answers'],
+                                'difficulty':items['difficulty'],
+                                'answer': 1
+                        }
+                        index = random.randrange(0, 4)
+                        question['options'].insert(index, items['correct_answer'])
+                        question['answer'] = index
+                        questions.append(question)
                     break
                 else:
                     print(f"Response code {response_code} received. Retrying...")
@@ -79,8 +90,10 @@ def start_quiz(request):
         difficulty=",".join([pref.difficulty for pref in preferences if pref.difficulty.lower() != 'any']),
         started_at=timezone.now()
     )
-
-    return render(request, 'quizTemplates/take_quiz.html', {'questions': questions, 'quiz_attempt_id': quiz_attempt.id})
+    print(questions)
+    
+    return JsonResponse({'questions': questions, 'quiz_attempt_id': quiz_attempt.id})
+    # return render(request, 'quizTemplates/take_quiz.html', {'questions': questions, 'quiz_attempt_id': quiz_attempt.id})
 
 
 @login_required

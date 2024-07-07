@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Take Quiz</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .question {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .option {
+            margin-left: 20px;
+        }
+    </style>
 </head>
 <body>
 <div class="container mt-5">
@@ -13,17 +22,20 @@
         {% csrf_token %}
         {% for question in questions %}
         <div class="form-group">
-            <label>{{ question.question }}</label>
-            <input type="hidden" name="question_{{ forloop.counter }}" value="{{ question.question }}">
-            <input type="hidden" name="correct_option_question_{{ forloop.counter }}" value="{{ question.correct_answer }}">
+            <p class="question">{{ forloop.counter }}. {{ question.question }}</p>
+            <input type="hidden" name="question_{{ question.question|slugify }}" value="{{ question.question }}">
+            <input type="hidden" name="correct_option_{{ question.question|slugify }}" value="{{ question.answer }}">
+
+            {% for option in question.options %}
             <div class="form-check">
-                {% for option in question.incorrect_answers %}
-                <input class="form-check-input" type="radio" name="selected_option_question_{{ forloop.counter }}" value="{{ option }}" required>
-                <label class="form-check-label">{{ option }}</label><br>
-                {% endfor %}
-                <input class="form-check-input" type="radio" name="selected_option_question_{{ forloop.counter }}" value="{{ question.correct_answer }}" required>
-                <label class="form-check-label">{{ question.correct_answer }}</label><br>
+                <input class="form-check-input" type="radio" 
+                       id="option_{{ question.question|slugify }}_{{ forloop.counter0 }}" 
+                       name="selected_option_{{ question.question|slugify }}" 
+                       value="{{ option }}" required>
+                <label class="form-check-label option" 
+                       for="option_{{ question.question|slugify }}_{{ forloop.counter0 }}">{{ option }}</label>
             </div>
+            {% endfor %}
         </div>
         {% endfor %}
         <button type="submit" class="btn btn-primary">Submit Quiz</button>
