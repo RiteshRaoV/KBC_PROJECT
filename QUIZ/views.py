@@ -4,10 +4,12 @@ import requests
 from .models import UserPreference, QuizAttempt,UserResponse
 from django.utils import timezone
 from django.http import JsonResponse
+from django.utils.http import urlencode
 from django.shortcuts import render, redirect, get_object_or_404
 from urllib.parse import urlencode
 import time
 import random
+import html
 
 
 @login_required
@@ -65,7 +67,7 @@ def start_quiz(request):
                 if response_code == 0:
                     for items in data.get('results'):
                         question = {
-                                'question': items['question'],
+                                'question': html.unescape(items['question']).replace('\"',"'"),
                                 'options': items['incorrect_answers'],
                                 'difficulty':items['difficulty'],
                                 'answer': 1
@@ -90,7 +92,6 @@ def start_quiz(request):
         difficulty=",".join([pref.difficulty for pref in preferences if pref.difficulty.lower() != 'any']),
         started_at=timezone.now()
     )
-    print(questions)
     
     return JsonResponse({'questions': questions, 'quiz_attempt_id': quiz_attempt.id})
     # return render(request, 'quizTemplates/take_quiz.html', {'questions': questions, 'quiz_attempt_id': quiz_attempt.id})
