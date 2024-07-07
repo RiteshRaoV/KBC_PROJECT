@@ -60,7 +60,7 @@ def signin(request):
         if user is not None:
             if user.is_email_verified:
                 login(request, user)
-                return redirect('home')
+                return redirect('set_preferences')
             else:
                 return HttpResponse('Email not verified. Please verify your email to log in.')
         return HttpResponse('Invalid credentials.')
